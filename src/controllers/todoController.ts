@@ -6,6 +6,7 @@ const todoRepository = AppDataSource.getRepository(Todo);
 module.exports = {
   getTodos,
   createTodos,
+  updateTodos,
 };
 
 async function getTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -26,6 +27,24 @@ async function createTodos(req: Request, res: Response, next: NextFunction): Pro
     const newTodo = todoRepository.create({ title });
     const saveTodo = await todoRepository.save(newTodo);
     res.json({ status: "success", data: saveTodo });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    let { id } = req.params;
+    let { title, completed } = req.body;
+    let todo = await todoRepository.findOneBy({ id });
+    if (!todo) {
+      res.status(404).json({ status: "error", message: "Todo not found" });
+      return;
+    }
+    todo.title = title !== undefined ? title : todo.title;
+    todo.completed = completed !== undefined ? completed : todo.completed;
+    const updatedTodo = await todoRepository.save(todo);
+    res.json({ status: "success", data: updatedTodo });
   } catch (error) {
     next(error);
   }
