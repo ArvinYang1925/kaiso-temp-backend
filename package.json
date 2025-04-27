@@ -36,10 +36,11 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   },
-  "lint-staged": {
+"lint-staged": {
   "src/**/*.{ts,js}": [
     "eslint --fix",
-    "prettier --write"
+    "prettier --write",
+    "git add"
   ]
 }
 }
