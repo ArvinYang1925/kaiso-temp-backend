@@ -43,3 +43,17 @@ export async function updateTodo(req: Request, res: Response, next: NextFunction
     next(error);
   }
 }
+
+export async function deleteTodo(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { id } = req.params;
+    const result = await todoRepository.delete({ id });
+    if (result.affected === 0) {
+      res.status(404).json({ status: "error", message: "Todo not found" });
+      return;
+    }
+    res.json({ status: "success", data: result });
+  } catch (error) {
+    next(error);
+  }
+}
