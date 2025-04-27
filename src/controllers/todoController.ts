@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "../config/db";
 import { Todo } from "../entities/Todo";
+import { TodoSchema, UpdateTodoSchema } from "../utils/todoValidationSchema";
 
 const todoRepository = AppDataSource.getRepository(Todo);
 
@@ -15,6 +16,12 @@ export async function getTodos(req: Request, res: Response, next: NextFunction):
 
 export async function createTodo(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const parsed = TodoSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const err = parsed.error.errors[0];
+      res.status(400).json({ status: "error", message: err.message });
+      return;
+    }
     const { title } = req.body;
     if (!title) {
       res.status(400).json({ status: "error", message: "Title is required" });
@@ -30,6 +37,12 @@ export async function createTodo(req: Request, res: Response, next: NextFunction
 
 export async function updateTodo(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const parsed = UpdateTodoSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const err = parsed.error.errors[0];
+      res.status(400).json({ status: "error", message: err.message });
+      return;
+    }
     const { id } = req.params;
     const { title, completed } = req.body;
     const todo = await todoRepository.findOneBy({ id });
@@ -41,6 +54,7 @@ export async function updateTodo(req: Request, res: Response, next: NextFunction
 
     todo.title = title !== undefined ? title : todo.title;
     todo.completed = completed !== undefined ? completed : todo.completed;
+
     const updatedTodo = await todoRepository.save(todo);
     res.json({ status: "success", data: updatedTodo });
   } catch (error) {
