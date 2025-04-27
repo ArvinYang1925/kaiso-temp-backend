@@ -3,13 +3,7 @@ import { AppDataSource } from "../config/db";
 import { Todo } from "../entities/Todo";
 const todoRepository = AppDataSource.getRepository(Todo);
 
-module.exports = {
-  getTodos,
-  createTodos,
-  updateTodos,
-};
-
-async function getTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const todos = await todoRepository.find();
     res.json({ status: "success", data: todos });
@@ -18,7 +12,7 @@ async function getTodos(req: Request, res: Response, next: NextFunction): Promis
   }
 }
 
-async function createTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function createTodo(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     let { title } = req.body;
     if (!title) {
@@ -32,7 +26,7 @@ async function createTodos(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
-async function updateTodos(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function updateTodo(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     let { id } = req.params;
     let { title, completed } = req.body;
