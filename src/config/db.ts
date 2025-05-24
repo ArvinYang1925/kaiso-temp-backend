@@ -21,6 +21,6 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [Todo],
-  synchronize: true, // 開發階段可以 true，正式環境建議改成 false
+  synchronize: false // 開發階段可以 true，正式環境建議改成 false
   logging: true,
 });
